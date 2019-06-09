@@ -14,3 +14,18 @@ plot(predict(linearmodel), residuals(linearmodel))
 
 setwd("~/Github/Introtoml")
 dataframe <- read.table("seeds_dataset.txt", header = FALSE)
+colnames(dataframe)<- c("Area","Perimeter", "Compactness", "length of kernel","width of kernel","asymmetry coefficient","length of kernel groove","Kama/Rosa/Canadian")
+ggplot(dataframe, aes(x = Area, y = Perimeter)) + geom_point()
+set.seed(10)
+wheatSeedCluster <- kmeans(dataframe, 3, nstart = 20)
+clusplot(dataframe,wheatSeedCluster$cluster, 
+         shade = TRUE, labels = 3, lines = 0, 
+         main = "2D plot")
+str(wheatSeedCluster)
+wss_values <- function(k) {kmeans(dataframe, k, nstart = 10 )$tot.withinss}
+
+# Compute and plot wss for k = 1 to k = 15
+k.values <- 2:15
+plot(k.values, wss_values, type="b", pch = 19, frame = FALSE, xlab="Number of clusters K", ylab="Total within-clusters sum of squares")
+
+#machine learning algoritm 3
