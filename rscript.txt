@@ -1,4 +1,5 @@
 #machine learning algoritm 1
+#http://archive.ics.uci.edu/ml/datasets/Metro+Interstate+Traffic+Volume
 install.packages("caret")
 setwd("~/Github/Introtoml")
 metro = read.csv("Metro_Interstate_Traffic_Volume.csv",header=T,na.strings="?")
@@ -8,4 +9,8 @@ predictions<-predict(linearmodel)
 print(predictions)
 plot(predict(linearmodel), residuals(linearmodel))
 
+#https://archive.ics.uci.edu/ml/datasets/seeds
 #machine learning algorithm 2
+
+setwd("~/Github/Introtoml")
+dataframe <- read.table("seeds_dataset.txt", header = FALSE)
