@@ -1,0 +1,11 @@
+#machine learning algoritm 1
+install.packages("caret")
+setwd("~/Github/Introtoml")
+metro = read.csv("Metro_Interstate_Traffic_Volume.csv",header=T,na.strings="?")
+linearmodel=lm(metro$traffic_volume~metro$temp)
+summary(linearmodel)
+predictions<-predict(linearmodel)
+print(predictions)
+plot(predict(linearmodel), residuals(linearmodel))
+
+#machine learning algorithm 2
