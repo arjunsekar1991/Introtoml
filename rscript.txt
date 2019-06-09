@@ -1,18 +1,27 @@
 #machine learning algoritm 1
 #http://archive.ics.uci.edu/ml/datasets/Metro+Interstate+Traffic+Volume
-install.packages("caret")
-setwd("~/Github/Introtoml")
-metro = read.csv("Metro_Interstate_Traffic_Volume.csv",header=T,na.strings="?")
-linearmodel=lm(metro$traffic_volume~metro$temp)
-summary(linearmodel)
-predictions<-predict(linearmodel)
-print(predictions)
-plot(predict(linearmodel), residuals(linearmodel))
+#install.packages("caret")
+#setwd("~/Github/Introtoml")
+#metro = read.csv("Metro_Interstate_Traffic_Volume.csv",header=T,na.strings="?")
+#linearmodel=lm(metro$traffic_volume~metro$temp)
+#summary(linearmodel)
+#predictions<-predict(linearmodel)
+#print(predictions)
+#plot(predict(linearmodel), residuals(linearmodel))
+linearregressionmodel = lm(airfoilNoiseData)
+summary(linearregressionmodel)
+predictions<-predict(linearregressionmodel)
+plot(predict(linearregressionmodel), residuals(linearregressionmodel))
+
+#https://archive.ics.uci.edu/ml/datasets/Airfoil+Self-Noise
+
 
 #https://archive.ics.uci.edu/ml/datasets/seeds
 #machine learning algorithm 2
 
 setwd("~/Github/Introtoml")
+library(ggplot2)
+library(cluster)
 dataframe <- read.table("seeds_dataset.txt", header = FALSE)
 colnames(dataframe)<- c("Area","Perimeter", "Compactness", "length of kernel","width of kernel","asymmetry coefficient","length of kernel groove","Kama/Rosa/Canadian")
 ggplot(dataframe, aes(x = Area, y = Perimeter)) + geom_point()
@@ -22,10 +31,90 @@ clusplot(dataframe,wheatSeedCluster$cluster,
          shade = TRUE, labels = 3, lines = 0, 
          main = "2D plot")
 str(wheatSeedCluster)
-wss_values <- function(k) {kmeans(dataframe, k, nstart = 10 )$tot.withinss}
+wss <- function(k) {kmeans(dataframe, k, nstart = 10 )$tot.withinss}
 
 # Compute and plot wss for k = 1 to k = 15
 k.values <- 2:15
+library(purrr)
+wss_values <- map_dbl(k.values, wss)
 plot(k.values, wss_values, type="b", pch = 19, frame = FALSE, xlab="Number of clusters K", ylab="Total within-clusters sum of squares")
 
-#machine learning algoritm 3
+##########################machine learning algoritm 3
+dataframe <- read.table("seeds_dataset.txt", header = FALSE)
+library(caret)
+preproc <- preProcess(dataframe, method = "pca")
+ ctrl <- trainControl(preProcOptions = list(pcaComp = 4))
+colnames(dataframe)<- c("Area","Perimeter", "Compactness", "lengthofkernel","widthofkernel","asymmetrycoefficient","lengthofkernelgroove","WheatVariety")
+
+index <- createDataPartition(dataframe$Compactness, p = 0.4, list = F)
+View(index)
+train_dataset <- dataframe[index,] ; nrow(train_dataset)
+[1] 86
+> test_dataset <- dataframe[-index,] ; nrow(test_dataset)
+[1] 124
+
+model_1_threshold <- train(WheatVariety ~ Area+Perimeter+Compactness+length of kernel+width of kernel+asymmetry coefficient+length of kernel groove", data = train_dataset, method = "rf", preProcess = c("center", "scale", "pca"), verbose = FALSE, trControl = ctrl)
+
+ rf_default <- train(WheatVariety ~ .,
++     data = train_dataset,
++     method = "rf",
++     trControl = trControl)
+
+install.packages("party")
+library(party)
+model1 <- randomForest(WheatVariety ~ Area+Perimeter, data = TrainSet, importance = TRUE)
+library("randomForest")
+dataframe <- read.table("seeds_dataset.txt", header = FALSE)
+colnames(dataframe)<- c("Area","Perimeter", "Compactness", "lengthofkernel","widthofkernel","asymmetrycoefficient","lengthofkernelgroove","WheatVariety")
+set.seed(100)
+train <- sample(nrow(dataframe), 0.7*nrow(dataframe), replace = FALSE)
+TrainSet <- dataframe[train,]
+ValidSet <- dataframe[-train,]
+summary(TrainSet)
+fit <- rpart( WheatVariety ~ Area+Perimeter+Compactness+lengthofkernel+widthofkernel+asymmetrycoefficient+lengthofkernelgroove, method="class", data=TrainSet)
+
+output.forest.train <- ctree(WheatVariety ~ Area + Perimeter+Compactness+lengthofkernel+widthofkernel+asymmetrycoefficient+lengthofkernelgroove, data = TrainSet)
+output.forest.test <- ctree(WheatVariety ~ Area + Perimeter+Compactness+lengthofkernel+widthofkernel+asymmetrycoefficient+lengthofkernelgroove, data = Valid)
+plot(output.forest.train, uniform=TRUE,  main="Classification Tree for Wheat")
+plot(output.forest.test, uniform=TRUE,  main="Classification Tree for Wheat")
+
+
+train(WheatVariety ~ Area + Perimeter+Compactness+lengthofkernel+widthofkernel+asymmetrycoefficient+lengthofkernelgroove, data = TrainSet, method = "C5.0", preProcess = c("center", "scale", "pca"),
+                                 verbose = FALSE, trControl = ctrl)
+
+
+
+#http://jasontdean.com/R/Titanic_Decision_Trees.html
+
+#http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/titanic3.xls
+
+#https://archive.ics.uci.edu/ml/machine-learning-databases/00267/
+
+#machine learning algorithm 3 v2
+setwd("~/Github/Introtoml")
+dataframe <- read.csv("data_banknote_authentication.txt", header = FALSE)
+colnames(dataframe)<- c("Variance","Skewness", "Curtosis", "Entropy","Class")
+
+#dataframe$Variance<-as.factor(dataframe$Variance)
+#dataframe$Skewness<-as.factor(dataframe$Skewness)
+#dataframe$Curtosis<-as.factor(dataframe$Curtosis)
+#dataframe$Entropy<-as.factor(dataframe$Entropy)
+dataframe$Class<-as.factor(dataframe$Class)
+splitData <- sample(2, nrow(dataframe), replace = TRUE, prob = c(0.7,0.3))
+trainingData <- dataframe[splitData==1,]
+testData <- dataframe[splitData==2,]
+install.packages("rpart")
+install.packages("rattle")
+install.packages("rpart.plot")
+library(rpart)
+library(rattle)
+
+library(rpart.plot)
+tree.train = rpart(Class~., data=trainingData)
+
+fancyRpartPlot(tree.train)
+tree.predict <- predict(tree.train, testData, type="class")
+install.packages('caret', dependencies = TRUE)
+library(caret)
+
+confusionMatrix(tree.predict, testData$Class)
