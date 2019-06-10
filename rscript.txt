@@ -8,18 +8,32 @@
 #predictions<-predict(linearmodel)
 #print(predictions)
 #plot(predict(linearmodel), residuals(linearmodel))
-linearregressionmodel = lm(airfoilNoiseData)
-summary(linearregressionmodel)
-predictions<-predict(linearregressionmodel)
-plot(predict(linearregressionmodel), residuals(linearregressionmodel))
+#airfoilNoiseData <- read.table("airfoil_self_noise.dat", header = FALSE)
+#linearregressionmodel = lm(airfoilNoiseData)
+#summary(linearregressionmodel)
+#predictions<-predict(linearregressionmodel)
+#plot(predict(linearregressionmodel), residuals(linearregressionmodel))
 
 #https://archive.ics.uci.edu/ml/datasets/Airfoil+Self-Noise
+#ml 1 v2
+https://archive.ics.uci.edu/ml/datasets/Concrete+Compressive+Strength
+setwd("~/Github/Introtoml")
+install.packages("readxl")
+library("readxl")
+my_data <- read_excel("Concrete_Data.xls",sheet=1)
+linearregressionmodel = lm(my_data$`Concrete compressive strength(MPa, megapascals)`~my_data$`Age (day)`, data=my_data)
+summary(linearregressionmodel)
+plot(my_data$`Concrete compressive strength(MPa, megapascals)`, pch = 16, col = "blue")
+abline(linearregressionmodel)
+plot(predict(linearregressionmodel), residuals(linearregressionmodel))
 
 
 #https://archive.ics.uci.edu/ml/datasets/seeds
 #machine learning algorithm 2
 
 setwd("~/Github/Introtoml")
+install.packages("ggplot2")
+install.packages("cluster")
 library(ggplot2)
 library(cluster)
 dataframe <- read.table("seeds_dataset.txt", header = FALSE)
