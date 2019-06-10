@@ -21,7 +21,7 @@ setwd("~/Github/Introtoml")
 install.packages("readxl")
 library("readxl")
 my_data <- read_excel("Concrete_Data.xls",sheet=1)
-linearregressionmodel = lm(my_data$`Concrete compressive strength(MPa, megapascals)`~my_data$`Age (day)`, data=my_data)
+linearregressionmodel = lm(my_data$`Concrete compressive strength(MPa, megapascals)`~my_data$`Cement (component 1)(kg in a m^3 mixture)`, data=my_data)
 summary(linearregressionmodel)
 plot(my_data$`Concrete compressive strength(MPa, megapascals)`, pch = 16, col = "blue")
 abline(linearregressionmodel)
@@ -122,13 +122,13 @@ install.packages("rattle")
 install.packages("rpart.plot")
 library(rpart)
 library(rattle)
-
 library(rpart.plot)
-tree.train = rpart(Class~., data=trainingData)
-
-fancyRpartPlot(tree.train)
-tree.predict <- predict(tree.train, testData, type="class")
 install.packages('caret', dependencies = TRUE)
 library(caret)
+tree.train = rpart(Class~., data=trainingData)
+fancyRpartPlot(tree.train)
+
+tree.predict <- predict(tree.train, testData, type="class")
+
 
 confusionMatrix(tree.predict, testData$Class)
