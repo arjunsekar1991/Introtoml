@@ -15,16 +15,12 @@ print(pam2.res)
 clusplot(pam2.res, main = "Cluster plot, k = 3", 
          color = TRUE)
 
-
 library(factoextra)
 gower_dist = daisy(dataframe,metric="gower")
 
-
 summary(gower_dist)
 
-
 gower_mat = as.matrix(gower_dist)
-
 
 sil_width = c(NA)
 
@@ -33,7 +29,6 @@ for(i in 2:10)
   pam_fit = pam(gower_dist, diss = TRUE, k=i)
   sil_width[i] = pam_fit$silinfo$avg.width
 }
-
 
 plot(1:10,sil_width,xlab="Number of Clusters",ylab="Silhouette width")
 lines(1:10, sil_width)
