@@ -5,6 +5,8 @@ setwd("~/Github/Introtoml")
 #install.packages("lattice")
 #install.packages("caret", dependencies = TRUE)
 library(randomForest)
+#install.packages("rfUtilities")
+library("rfUtilities")
 library(caret)
 
 
@@ -21,9 +23,16 @@ set.seed(222)
 rfModel <- randomForest(Class ~ ., data=trainingData)
 print(rfModel)
 print(attributes(rfModel))
-
+rf.cv <- rf.crossValidation(rfModel, trainingData, p=0.10, n=99, ntree=501)
 #Prediction and Confusion Matrix for training data
 
+par(mfrow=c(1,2)) 
+plot(rf.cv, type = "cv", main = "CV producers accuracy")
+plot(rf.cv, type = "model", main = "Model producers accuracy")
+
+par(mfrow=c(1,2)) 
+plot(rf.cv, type = "cv", stat = "oob", main = "CV oob error")
+plot(rf.cv, type = "model", stat = "oob", main = "Model oob error")	
 p1 <- predict(rfModel, trainingData)
 print(head(p1))
 confusionMatrix(p1, trainingData$Class)
